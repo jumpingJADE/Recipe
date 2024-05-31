@@ -76,10 +76,14 @@ const sampleRecipes = [
 ]
 
 const App = () => {
+  const [recipes, setRecipes] = React.useState()
   const [selectedRecipeId, setSelectedRecipeId] = React.useState()
   return (
     <>
-      <RecipeList />
+      <RecipeList
+        recipes={recipes}
+        selectedRecipeId={selectedRecipeId}
+      />
       {
         selectedRecipeId && <EditorPanel />
       }
