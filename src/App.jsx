@@ -112,10 +112,12 @@ const App = () => {
     setSelectedRecipeId(id)
   }
 
+  // Find selected recipe
   function handleSelectRecipe() {
     return recipes.find(recipe => recipe.id === selectedRecipeId)
   }
 
+  // Change recipe content
   function handleRecipeChange(id, recipe) {
     const newRecipes = [...recipes]
     const index = newRecipes.findIndex(r => r.id === id)
