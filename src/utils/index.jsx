@@ -14,3 +14,15 @@ export function classNameStyled(classNames, styles, preClassNames) {
   // ["btn-456", "btn-primary-123", "blue", "bold-456"] => "btn-456 btn-primary-123 blue bold-456"
   return [...preClassListStyled, ...classListStyled].join(' ')
 }
+
+
+export function styled(styles, ...rest) {
+  const classList = []
+  rest.forEach(classNames => {
+    if (!classNames) return
+    classNames.split(' ').forEach(className => {
+      className && classList.push(styles[className] || className)
+    })
+  })
+  return classList.join(' ')
+}

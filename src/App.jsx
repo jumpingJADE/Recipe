@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { v4 as uuidV4 } from 'uuid'
 import RecipeList from '@/components/Recipe'
 import EditorPanel from '@/components/Editor'
@@ -76,19 +76,71 @@ const sampleRecipes = [
 ]
 
 const App = () => {
-  const [recipes, setRecipes] = React.useState()
+
+  const [recipes, setRecipes] = React.useState(sampleRecipes)
   const [selectedRecipeId, setSelectedRecipeId] = React.useState()
+
+
+  // Add
+  function handleRecipeAdd() {
+    const newRecipe = {
+      id: uuidV4(),
+      name: 'New',
+      servings: 1,
+      cookTime: '1:00',
+      instructions: ["New Instruction 1", "New Instruction 2"],
+      ingredients: [
+        {
+          id: uuidV4(),
+          name: 'demo',
+          amount: '1 Tbs'
+        }
+      ]
+    }
+
+    // Select the new recipe
+    setRecipes([...recipes, newRecipe])
+  }
+
+  // Delete
+  function handleRecipeDelete(id) {
+    setRecipes(recipes.filter(recipe => recipe.id !== id))
+  }
+
+  // Selecte
+  function handleRecipeSelect(id) {
+    setSelectedRecipeId(id)
+  }
+
+  function handleSelectRecipe() {
+    return recipes.find(recipe => recipe.id === selectedRecipeId)
+  }
+
+  function handleRecipeChange(id, recipe) {
+    const newRecipes = [...recipes]
+    const index = newRecipes.findIndex(r => r.id === id)
+    newRecipes[index] = recipe
+    setRecipes(newRecipes)
+  }
+
   return (
     <>
       <RecipeList
         recipes={recipes}
         selectedRecipeId={selectedRecipeId}
+        handleRecipeAdd={handleRecipeAdd}
+        handleRecipeDelete={handleRecipeDelete}
+        handleRecipeSelect={handleRecipeSelect}
       />
       {
-        selectedRecipeId && <EditorPanel />
+        selectedRecipeId &&
+        <EditorPanel
+          handleSelectRecipe={handleSelectRecipe}
+          handleRecipeChange={handleRecipeChange}
+          handleRecipeSelect={handleRecipeSelect}
+        />
       }
     </>
-
   )
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './index.module.scss'
-import { classNameStyled } from '@/utils'
+import { classNameStyled, styled } from '@/utils'
 
 const Button = (props) => {
   const { className, ...rest } = props
