@@ -2,9 +2,23 @@ import React from 'react'
 import { styled } from '@/utils'
 import styles from './index.module.scss'
 
-const Instruction = () => {
+const Instruction = (props) => {
+  const {
+    instructions,
+    className,
+    ...rest
+  } = props
   return (
-    <div>Instruction</div>
+    <div className={styled(styles, 'instruction', className)} {...rest}>
+      <span className={styled(styles,'instruction_title')}>Instructions</span>
+      {
+        Array.isArray(instructions) && instructions.map((instruction,index)=>(
+          <span key={index} className={styled(styles,'instruction_item')}>
+            {instruction}
+          </span>
+        ))
+      }
+    </div>
   )
 }
 

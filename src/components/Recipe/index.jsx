@@ -8,20 +8,36 @@ import Panel from '@/components/Panel';
 const RecipeList = (props) => {
   const { recipes,
     selectedRecipeId,
+    lastSelectedRecipeId,
     className,
     handleRecipeAdd,
     handleRecipeDelete,
     handleRecipeSelect
   } = props
-  console.log(recipes);
+  // Tigger
+  const [newAddRecipe, setNewAddRecipe] = React.useState(false)
+  const ref = React.useRef()
+  const addRecipe = () => {
+    handleRecipeAdd()
+    setNewAddRecipe(true)
+  }
+  React.useEffect(() => {
+    if (newAddRecipe) {
+      setTimeout(() => {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' })
+      })
+      setNewAddRecipe(false)
+    }
+  }, [newAddRecipe])
+
   const classNames = classNameStyled(className, styles, 'container')
   return (
     <div className={classNames}>
       <div className={styles['title']}>
-        TopCoder Recipe Book
+        Richard's Recipe HandBook
       </div>
       <div className={styles['add']}>
-        <Button className="btn-big" onClick={() => { handleRecipeAdd() }}>Add Recipe</Button>
+        <Button className="btn-big" onClick={addRecipe}>Add Recipe</Button>
       </div>
       <div>
         {
@@ -32,13 +48,15 @@ const RecipeList = (props) => {
               handleRecipeDelete={handleRecipeDelete}
               handleRecipeSelect={handleRecipeSelect}
               selectedRecipeId={selectedRecipeId}
+              lastSelectedRecipeId={lastSelectedRecipeId}
             />
           ))
         }
       </div>
       <div className={styles['add']}>
-        <Button className="btn-big" onClick={() => { handleRecipeAdd() }}>Add Recipe</Button>
+        <Button className="btn-big" onClick={addRecipe}>Add Recipe</Button>
       </div>
+      <div className={styles['the-end']} ref={ref}></div>
     </div>
   )
 }
@@ -54,18 +72,23 @@ const Recipe = (props) => {
     className,
     handleRecipeDelete,
     handleRecipeSelect,
-    selectedRecipeId
+    selectedRecipeId,
+    lastSelectedRecipeId
   } = props
 
   const [chosen, setChosen] = React.useState('')
+  const [lastChosen, setLastChosen] = React.useState('')
 
   React.useEffect(() => {
     selectedRecipeId === id ? setChosen('chosen') : setChosen('')
   }, [selectedRecipeId])
+  React.useEffect(() => {
+    lastSelectedRecipeId === id ? setLastChosen('last-chosen') : setLastChosen('')
+  }, [selectedRecipeId])
 
   return (
     <div
-      className={styled(styles, className, 'recipe', chosen)}
+      className={styled(styles, className, 'recipe', chosen, lastChosen)}
       onClick={() => {
         handleRecipeSelect(id)
       }}

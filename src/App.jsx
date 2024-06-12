@@ -75,12 +75,33 @@ const sampleRecipes = [
   }
 ]
 
+const recipesKey = import.meta.env.VITE_RECIPES_KEY
+const selectedRecipeIdKey = import.meta.env.VITE_SELECTED_RECIPE_ID_KEY
+const lastSelectedRecipeIdKey = import.meta.env.VITE_LAST_SELECTED_RECIPE_ID_KEY
+
 const App = () => {
 
-  const [recipes, setRecipes] = React.useState(sampleRecipes)
-  const [selectedRecipeId, setSelectedRecipeId] = React.useState()
-
-
+  const [recipes, setRecipes] = React.useState(() => {
+    const localData = localStorage.getItem(recipesKey)
+    return localData ? JSON.parse(localData) : sampleRecipes
+  })
+  React.useEffect(() => {
+    localStorage.setItem(recipesKey, JSON.stringify(recipes))
+  }, [recipes])
+  const [selectedRecipeId, setSelectedRecipeId] = React.useState(() => {
+    const localData = localStorage.getItem(selectedRecipeIdKey)
+    return localData ? JSON.parse(localData) : null
+  })
+  React.useEffect(() => {
+    localStorage.setItem(selectedRecipeIdKey, JSON.stringify(selectedRecipeId))
+  }, [selectedRecipeId])
+  const [lastSelectedRecipeId, setLastSelectedRecipeId] = React.useState(() => {
+    const localData = localStorage.getItem(lastSelectedRecipeIdKey)
+    return localData ? JSON.parse(localData) : null
+  })
+  React.useEffect(() => {
+    localStorage.setItem(lastSelectedRecipeIdKey, JSON.stringify(lastSelectedRecipeId))
+  }, [lastSelectedRecipeId])
   // Add
   function handleRecipeAdd() {
     const newRecipe = {
@@ -99,17 +120,26 @@ const App = () => {
     }
 
     // Select the new recipe
+    handleRecipeSelect(newRecipe.id)
     setRecipes([...recipes, newRecipe])
   }
 
   // Delete
   function handleRecipeDelete(id) {
+    if(selectedRecipeId !== null && id === selectedRecipeId){
+      setSelectedRecipeId(null)
+    }
     setRecipes(recipes.filter(recipe => recipe.id !== id))
   }
 
   // Selecte
   function handleRecipeSelect(id) {
-    setSelectedRecipeId(id)
+   if(!selectedRecipeId && id === lastSelectedRecipeId){
+    setLastSelectedRecipeId(null)
+   }else if(selectedRecipeId && id != selectedRecipeId){
+    setLastSelectedRecipeId(selectedRecipeId)
+   }
+   setSelectedRecipeId(id)
   }
 
   // Find selected recipe
@@ -124,12 +154,12 @@ const App = () => {
     newRecipes[index] = recipe
     setRecipes(newRecipes)
   }
-
   return (
     <>
       <RecipeList
         recipes={recipes}
         selectedRecipeId={selectedRecipeId}
+        lastSelectedRecipeId={lastSelectedRecipeId}
         handleRecipeAdd={handleRecipeAdd}
         handleRecipeDelete={handleRecipeDelete}
         handleRecipeSelect={handleRecipeSelect}
